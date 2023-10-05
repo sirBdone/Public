@@ -5,28 +5,37 @@ $newExcel = Import-Excel -Path "Path\to\NewExcelFile.xlsx"
 # Specify the column name for the Description column
 $descriptionColumnName = "Description"
 
-# Initialize an array to store the differences
-$differences = @()
+# Create an empty array to store the merged data
+$mergedExcel = @()
 
-# Loop through each row in $newExcel
-foreach ($newRow in $newExcel) {
-    # Get the Description value for the current row in $newExcel
-    $newDescription = $newRow.$descriptionColumnName
-    
-    # Check if the Description value exists in $oldExcel
-    $descriptionExistsInOld = $oldExcel | Where-Object { $_.$descriptionColumnName -eq $newDescription }
+# Create a hashtable to track the descriptions from $oldExcel
+$oldDescriptions = @{}
 
-    # If the Description value is not found in $oldExcel, add it to the differences array
-    if (-not $descriptionExistsInOld) {
-        $differences += $newRow
+# Add rows from $oldExcel to $mergedExcel
+foreach ($oldRow in $oldExcel) {
+    $oldDescriptions[$oldRow.$descriptionColumnName] = $true
+    $mergedExcel += [PSCustomObject]$oldRow.PSObject.Properties | ForEach-Object {
+        $propName = $_.Name
+        [PSCustomObject]@{ $propName = $oldRow.$propName }
     }
 }
 
-# Add the new rows from $newExcel to $oldExcel
-$oldExcel += $differences
+# Loop through each row in $newExcel
+foreach ($newRow in $newExcel) {
+    $newDescription = $newRow.$descriptionColumnName
+
+    # Check if the Description value exists in $oldDescriptions
+    if (-not $oldDescriptions.ContainsKey($newDescription)) {
+        # Add the new row to $mergedExcel
+        $mergedExcel += [PSCustomObject]$newRow.PSObject.Properties | ForEach-Object {
+            $propName = $_.Name
+            [PSCustomObject]@{ $propName = $newRow.$propName }
+        }
+    }
+}
 
 # Apply formatting to the Description column cells in the merged Excel file
-$oldExcel | ForEach-Object {
+$mergedExcel | ForEach-Object {
     $_.$descriptionColumnName = @{
         Text = $_.$descriptionColumnName
         Color = "Yellow"  # You can change the color here
@@ -34,4 +43,4 @@ $oldExcel | ForEach-Object {
 }
 
 # Export the merged Excel file with formatting
-$oldExcel | Export-Excel -Path "Path\to\MergedExcelFile.xlsx" -AutoSize -Show
+$mergedExcel | Export-Excel -Path "Path\to\MergedExcelFile.xlsx" -AutoSize -Show
