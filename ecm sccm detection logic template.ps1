@@ -1,5 +1,5 @@
 ﻿Function Get-FileMetaData {
-
+[cmdletbinding()]
 Param([string[]]$folder)
 
 foreach($sFolder in $folder){
