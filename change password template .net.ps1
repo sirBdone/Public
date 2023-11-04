@@ -2,7 +2,7 @@
 
 # Create a form
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "User Information"
+$form.Text = "Change Password: length:16-32 Aa1[!@#]"
 $form.Size = New-Object System.Drawing.Size(300, 200)
 $form.StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen
 
@@ -32,7 +32,7 @@ $label3.Text = "Re-enter Password:"
 $form.Controls.Add($label3)
 
 $textPasswordReentered = New-Object System.Windows.Forms.TextBox
-$textPasswordReentered.Location = New-Object System.Drawing.Point(160, 80)
+$textPasswordReentered.Location = New-Object System.Drawing.Point(120, 80)
 $form.Controls.Add($textPasswordReentered)
 $textPasswordReentered.PasswordChar = '*'
 
@@ -47,15 +47,37 @@ $button.Add_Click({
     $password = $textPassword.Text
     $passwordReentered = $textPasswordReentered.Text
 
-    if ($password -eq $passwordReentered -and $password -match "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#]).{16,}$") {
+    if ($password -eq $passwordReentered -and $password -match "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#%^&*(){}|<>?,./\[\]]).{16,32}$") {
         # Password meets the criteria
         # Here, you can make the JSON API call with the $username and $password variables
         # Replace the following line with your API call logic
         Write-Host "Username: $username, Password: $password (API call would go here)"
+        $form.DialogResult = [System.Windows.Forms.DialogResult]::OK
     } else {
-        [System.Windows.Forms.MessageBox]::Show("Password does not meet the criteria.")
+        [System.Windows.Forms.MessageBox]::Show("Password does not meet the criteria. Please use 16-32 characters, 1 uppercase letter, 1 lowercase letter, and one of these '!@#$'. ")
     }
 })
 
-# Display the form
-$form.ShowDialog()
+# Create a Cancel button
+$cancelButton = New-Object System.Windows.Forms.Button
+$cancelButton.Location = New-Object System.Drawing.Point(200, 120)
+$cancelButton.Text = "Cancel"
+$form.Controls.Add($cancelButton)
+
+# Add an event handler for the Cancel button
+$cancelButton.Add_Click({
+    $form.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
+})
+
+$form.Topmost = $True
+
+# Display the form using ShowDialog to make it modal
+$result = $form.ShowDialog()
+
+if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
+    # User clicked Submit
+    # Handle the submission if needed
+} else {
+    # User clicked Cancel or closed the form
+    # Handle the cancellation or form closure if needed
+}
