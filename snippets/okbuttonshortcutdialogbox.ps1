@@ -1,0 +1,1 @@
+﻿$dialog.OkButton.Shortcut = [System.Windows.Forms.Keys]::RControlKey -bor [System.Windows.Forms.Keys]::Enter
