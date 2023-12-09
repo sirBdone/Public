@@ -33,10 +33,13 @@
 
     param(
     
-        $chromedriver=$global:chromedriver
-        ,[string]$url
+        [string]$url
 
     )    
+
+    if($global:chromedriver){
+        $chromedriver = $global:chromedriver
+    }
 
     if($url -match "^https?://.+") {
         write-host "URL IS GOOD" -ForegroundColor Green
