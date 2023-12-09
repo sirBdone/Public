@@ -2,7 +2,30 @@
 
 <#
 
-    
+        .SYNOPSIS
+        Starts a Chrome browser automatically, with $global:chromedriver to manipulate the page to navigate, fill forms, scrape, etc.
+
+        .DESCRIPTION
+        Will check to see if you currently have a $chromedriver window open, then will search for url in current tabs. If a similar url is already open,
+        it will open the $url in that tab, otherwise it will open a new tab and navigate to that tab; and finally, if no $chromedriver exists, then 
+        it will open up a new browser and assign it to $global:chromedriver, meaning after this fn runs, you will have a scriptable $variable to
+        look for DOM objects, and manipulate with .click(), .clear(), .navigate().gotourl("$url"), etc.
+
+        .PARAMETER chromedriver
+        The variable that has all of the webbrowser's information in it. Set as $global:chromedriver, it will be available after this fn finishes running.
+
+        .PARAMETER url
+        You can assign url as google.com, spotify.com/etc or https://google.com, https://spotify.com/etc/etc
+
+        .EXAMPLE
+        new-startautoweb -url google.com
+        new-startautoweb spotify.com/etc/etc.html
+
+        .NOTES
+        Name: new-startautoweb
+        Author: Brandon Carey
+        Version 2.3
+        LastDateModified: 12/9/2023 4:12am
 
 #>
 
@@ -12,9 +35,6 @@
     
         $chromedriver=$global:chromedriver
         ,[string]$url
-        ,[switch]$withprofile=$true
-        ,[switch]$return
-        ,[switch]$se=$false
 
     )    
 
