@@ -1,17 +1,16 @@
-﻿function firefox-tv {
+﻿function close-firefox{
+    get-process | ?{$_.Name -match "gecko|firefox"} | Stop-Process -Force
+}
+
+new-alias -Name cff -Value close-firefox -Force
+
+function firefox-tv {
     
     [cmdletbinding()]
 
     param(
         [switch]$clear
     )
-
-    function close-firefox{
-        get-process | ?{$_.Name -match "gecko|firefox"} | Stop-Process -Force
-    }
-
-    New-Alias cff -Value close-firefox -Force
-
 
     if($clear){
         cff
@@ -22,7 +21,7 @@
     if(!($global:tvmenu)){
 
         if(!($geckodriver.url -match "$url")){
-            start-autoweb_firefox -url 'https://thetvapp.to/' -kiosk
+            start-autoweb_firefox -url 'https://thetvapp.to/'
         }
         else{
             $geckodriver.Navigate().gotourl($url)
@@ -39,7 +38,7 @@
             }
         $i++
         };
-    }
+    
         $global:tvmenu | out-host; #ogv -PassThru -outvariable selection;
 
         $search = read-host "what number or channel do you want?";
@@ -52,6 +51,11 @@
         #else{
         #    $global:menu=$selection
         #};
+
+        }
+        else{
+            $global:tvmenu | ogv -PassThru -outvariable selection
+        }
 
         $selection | out-host;
 
@@ -72,12 +76,14 @@
 
         if($url){    
             if($geckodriver.url -match 'https://thetvapp.to'){$geckodriver.Navigate().gotourl($url)}
-            else{start-autoweb_firefox -url $url -kiosk}
+            else{start-autoweb_firefox -url $url }
         }        
 
 
-        start-sleep -Seconds 5
-        $geckodriver.FindElementByXPath('/html/body/div/div/div[1]/div[2]/div[2]/div[13]/div[1]/div/div/div[2]/div').click()
+        #start-sleep -Seconds 3
+        do{start-sleep -Seconds 1}until(
+            $geckodriver.FindElementByXPath('/html/body/div/div/div[1]/div[2]/div[2]/div[13]/div[1]/div/div/div[2]/div').click()
+        )
 
         $geckodriver.FindElementByXPath('/html/body/div/div/div[1]/div[2]/div[2]/div[4]/video').sendkeys('f')
 
