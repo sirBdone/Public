@@ -1,0 +1,6 @@
+C:\Users\SirBd0ne\Documents\GitHub\PScode\synctoPublic.txt
+C:\Users\SirBd0ne\Documents\GitHub\PScode\Automation\SECRETCODES.ps1
+C:\Users\SirBd0ne\Documents\GitHub\PScode\Automation\make-password.ps1
+C:\Users\SirBd0ne\Documents\GitHub\PScode\Snippets\read-multiline.ps1
+C:\Users\SirBd0ne\Documents\GitHub\PScode\Automation\pwsh7_mode.ps1
+C:\Users\SirBd0ne\Documents\GitHub\PScode\Automation\update-chromedriver.ps1
