@@ -115,6 +115,8 @@ function make-password {
         if(!(get-module credentialmanager -ErrorAction SilentlyContinue)){
             Install-Module CredentialManager -force
         }
+
+        $credential = $null
         
         if(!($credentialname)){
             $credentialname = read-host "what name to save credential under? ie. BC Facebook"
@@ -148,11 +150,11 @@ function make-password {
         #[System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($credential.Password))
         $encryptedpassword = (encode -messageIn $credential.getnetworkcredential().password ) #-secretcode $secretcode)
 
-        New-StoredCredential -Target $credentialname -UserName $usernamecred -Password $encryptedpassword -Comment $credentialname -Persist LocalMachine -Type Generic -ea Stop
+        start-process powershell.exe -argumentlist "-Command New-StoredCredential -Target $credentialname -UserName $usernamecred -Password $encryptedpassword -Comment $credentialname -Persist LocalMachine -Type Generic -ea Stop" -NoNewWindow -wait
         
     }
     catch{
-        write-error "$($error[0])"
+        write-error "Something happened in main block"
     }
 }
 
@@ -220,3 +222,17 @@ function get-password {
     }
 }
 
+function Set-PersistentSecretCode {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$SecretCode
+    )
+
+    # Set the environment variable for the current session
+    [System.Environment]::SetEnvironmentVariable('secretcode', $SecretCode, [System.EnvironmentVariableTarget]::Process)
+
+    # Set the environment variable permanently for the user
+    [System.Environment]::SetEnvironmentVariable('secretcode', $SecretCode, [System.EnvironmentVariableTarget]::User)
+
+    Write-Host "Environment variable 'secretcode' has been set and will persist across sessions."
+}
