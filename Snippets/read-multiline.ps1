@@ -7,9 +7,17 @@ function Read-MultiLine {
         [string]$WindowTitle
     )
 
+    # Install required packages if not already installed
+    if (-not (Get-Package -Name System.Windows.Forms -ErrorAction SilentlyContinue)) {
+        Install-Package -Name System.Windows.Forms -Source 'nuget.org' -Force
+    }
+    if (-not (Get-Package -Name System.Drawing.Common -ErrorAction SilentlyContinue)) {
+        Install-Package -Name System.Drawing.Common -Source 'nuget.org' -Force
+    }
+
     # Load required assemblies
-    Add-Type -AssemblyName System.Drawing
     Add-Type -AssemblyName System.Windows.Forms
+    Add-Type -AssemblyName System.Drawing
 
     # Create the form
     $form = New-Object System.Windows.Forms.Form
@@ -52,7 +60,10 @@ function Read-MultiLine {
     $form.Controls.Add($cancelButton)
 
     # Event handler for OK button
-    $okButton.Add_Click({ $form.Tag = $textBox.Text; $form.Close() })
+    $okButton.Add_Click({
+        $form.Tag = $textBox.Text -split "`n" | Where-Object { $_.Trim() -ne "" }
+        $form.Close()
+    })
 
     # Event handler for Cancel button
     $cancelButton.Add_Click({ $form.Tag = $null; $form.Close() })
