@@ -2,18 +2,10 @@
 function Read-MultiLine {
     [cmdletbinding()]
     param (
-        [string]$Message,
+        [string]$Message="Added as array, 1 item per line",
         [string]$DefaultText,
-        [string]$WindowTitle
+        [string]$WindowTitle="read-MultiLine"
     )
-
-    # Install required packages if not already installed
-    if (-not (Get-Package -Name System.Windows.Forms -ErrorAction SilentlyContinue)) {
-        Install-Package -Name System.Windows.Forms -Source 'nuget.org' -Force
-    }
-    if (-not (Get-Package -Name System.Drawing.Common -ErrorAction SilentlyContinue)) {
-        Install-Package -Name System.Drawing.Common -Source 'nuget.org' -Force
-    }
 
     # Load required assemblies
     Add-Type -AssemblyName System.Windows.Forms
